@@ -1,6 +1,7 @@
 package main
 
 import (
+	"crypto/sha256"
 	"fmt"
 	"os"
 	"syscall"
@@ -12,7 +13,7 @@ func AskPassword() string {
 	var password string
 
 	for {
-		fmt.Fprint(os.Stderr, "Type your password (will be printed on output): ")
+		fmt.Fprint(os.Stderr, "Type your password: ")
 		input, _ := term.ReadPassword(int(syscall.Stdin))
 
 		password = string(input)
@@ -20,13 +21,15 @@ func AskPassword() string {
 		if password != "" {
 			break
 		}
+
 	}
 
-	return password
+	hashedPassword := sha256.Sum256([]byte(password))
+	return string(hashedPassword[:])
 }
 
 func main() {
 	password := AskPassword()
 
-	fmt.Printf("\nOh, that's your password? %s\n", password)
+	fmt.Printf("\nOh, that's your password? %x\n", password)
 }
